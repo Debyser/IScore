@@ -1,0 +1,3 @@
+﻿- creation du schéma via dbeaver
+- ensuite le ddl
+- ensuite faire les classes sql lite

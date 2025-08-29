@@ -1,0 +1,45 @@
+﻿CREATE TABLE Tournament (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Name TEXT NOT NULL,
+    SportType TEXT NOT NULL CHECK(SportType IN ('Pétanque', 'Mini-foot')),
+    StartDate TEXT NOT NULL,
+    Format TEXT NOT NULL CHECK(Format IN ('Poule', 'Elimination', 'Championnat'))
+);
+
+CREATE TABLE Team (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Name TEXT NOT NULL,
+    PoolId INTEGER,
+    FOREIGN KEY (PoolId) REFERENCES Pool(Id) ON DELETE SET NULL
+);
+
+CREATE TABLE Pool (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Name TEXT NOT NULL,
+    TournamentId INTEGER,
+    FOREIGN KEY (TournamentId) REFERENCES Tournament(Id) ON DELETE CASCADE
+);
+
+CREATE TABLE Match (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    TournamentId INTEGER,
+    PoolId INTEGER,
+    TeamId1 INTEGER,
+    TeamId2 INTEGER,
+    TeamScore1 INTEGER,
+    TeamScore2 INTEGER,
+    MatchDate TEXT NOT NULL,
+    Phase TEXT,
+    FOREIGN KEY (TournamentId) REFERENCES Tournament(Id) ON DELETE CASCADE,
+    FOREIGN KEY (PoolId) REFERENCES Pool(Id) ON DELETE SET NULL,
+    FOREIGN KEY (TeamId1) REFERENCES Team(Id) ON DELETE CASCADE,
+    FOREIGN KEY (TeamId2) REFERENCES Team(Id) ON DELETE CASCADE
+);
+
+CREATE TABLE TournamentTeam (
+    TournamentId INTEGER,
+    TeamId INTEGER,
+    PRIMARY KEY (TournamentId, TeamId),
+    FOREIGN KEY (TournamentId) REFERENCES Tournament(Id) ON DELETE CASCADE,
+    FOREIGN KEY (TeamId) REFERENCES Team(Id) ON DELETE CASCADE
+);
