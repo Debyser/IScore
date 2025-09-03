@@ -67,9 +67,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="NewFolder\" />
-	  <Folder Include="View\" />
-	  <Folder Include="ViewModel\" />
+	  <MauiXaml Update="Views\TournamentPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	</ItemGroup>
 
 </Project>

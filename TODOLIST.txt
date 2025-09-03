@@ -1,3 +1,295 @@
 ﻿- creation du schéma via dbeaver
 - ensuite le ddl
 - ensuite faire les classes sql lite
+
+[15:33, 29/08/2025] Stéphane Ganhy: tu dois pas oublié que
+[15:33, 29/08/2025] Stéphane Ganhy: après install
+[15:33, 29/08/2025] Stéphane Ganhy: tu dois crée ta db sql lite from scratch
+[15:33, 29/08/2025] Stéphane Ganhy: avec ton script embeded
+[15:33, 29/08/2025] Stéphane Ganhy: dans ton projet
+
+
+Le format "Championship" (ex. 5 équipes jouant toutes contre toutes) est toujours bien supporté :
+
+Créez un Tournament avec format = 'Championship'.
+Créez une Pool unique (ex. name = 'Championship', pool2tournament = Tournament.id).
+Générez N * (N-1) / 2 matches (ex. 10 matches pour 5 équipes) dans Match, avec match2pool pointant vers cette poule.
+Les équipes sont associées indirectly au tournoi via les matches (ou via la poule pour les classements).
+Les équipes sont associées indirectly au tournoi via les matches (ou via la poule pour les classements).
+
+using SQLite;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using VotreApp.Models;
+
+namespace VotreApp.Services
+{
+    public class DatabaseService
+    {
+        private readonly SQLiteAsyncConnection _database;
+
+        public DatabaseService()
+        {
+            var dbPath = Path.Combine(FileSystem.AppDataDirectory, "tournaments.db3");
+            _database = new SQLiteAsyncConnection(dbPath);
+        }
+
+        public async Task InitializeAsync()
+        {
+            // Créer les tables via l'ORM
+            await _database.CreateTableAsync<Team>();
+            await _database.CreateTableAsync<Tournament>();
+            await _database.CreateTableAsync<Pool>();
+            await _database.CreateTableAsync<Match>();
+        }
+
+        // Valider les contraintes CHECK
+        private void ValidateTournament(Tournament tournament)
+        {
+            if (string.IsNullOrEmpty(tournament.Name) || tournament.Name.Length > 50)
+                throw new ArgumentException("Tournament name must be non-empty and <= 50 characters.");
+            if (string.IsNullOrEmpty(tournament.SportType) || tournament.SportType.Length > 20 ||
+                !new[] { "Petanque", "MiniFootball" }.Contains(tournament.SportType))
+                throw new ArgumentException("SportType must be 'Petanque' or 'MiniFootball'.");
+            if (string.IsNullOrEmpty(tournament.StartDate))
+                throw new ArgumentException("StartDate must be non-empty.");
+            if (string.IsNullOrEmpty(tournament.Format) || tournament.Format.Length > 20 ||
+                !new[] { "Pool", "Elimination", "Championship" }.Contains(tournament.Format))
+                throw new ArgumentException("Format must be 'Pool', 'Elimination', or 'Championship'.");
+        }
+
+        private async Task ValidatePoolAsync(Pool pool)
+        {
+            if (string.IsNullOrEmpty(pool.Name))
+                throw new ArgumentException("Pool name must be non-empty.");
+            if (pool.Pool2Tournament != 0)
+            {
+                var tournament = await _database.Table<Tournament>().FirstOrDefaultAsync(t => t.Id == pool.Pool2Tournament);
+                if (tournament == null)
+                    throw new ArgumentException($"Tournament with ID {pool.Pool2Tournament} does not exist.");
+            }
+        }
+
+        private async Task ValidateMatchAsync(Match match)
+        {
+            if (match.Match2Tournament == 0)
+                throw new ArgumentException("Match2Tournament is required.");
+            if (match.Match2Team1 == 0 || match.Match2Team2 == 0)
+                throw new ArgumentException("Match2Team1 and Match2Team2 are required.");
+            if (string.IsNullOrEmpty(match.MatchDate))
+                throw new ArgumentException("MatchDate is required.");
+
+            var tournament = await _database.Table<Tournament>().FirstOrDefaultAsync(t => t.Id == match.Match2Tournament);
+            if (tournament == null)
+                throw new ArgumentException($"Tournament with ID {match.Match2Tournament} does not exist.");
+
+            var team1 = await _database.Table<Team>().FirstOrDefaultAsync(t => t.Id == match.Match2Team1);
+            var team2 = await _database.Table<Team>().FirstOrDefaultAsync(t => t.Id == match.Match2Team2);
+            if (team1 == null || team2 == null)
+                throw new ArgumentException($"Team with ID {match.Match2Team1} or {match.Match2Team2} does not exist.");
+
+            if (match.Match2Pool.HasValue && match.Match2Pool != 0)
+            {
+                var pool = await _database.Table<Pool>().FirstOrDefaultAsync(p => p.Id == match.Match2Pool);
+                if (pool == null)
+                    throw new ArgumentException($"Pool with ID {match.Match2Pool} does not exist.");
+            }
+        }
+
+        // Gérer ON DELETE CASCADE et SET NULL
+        private async Task HandleDeleteTournamentAsync(int tournamentId)
+        {
+            // ON DELETE CASCADE pour Pool
+            await _database.ExecuteAsync("DELETE FROM Pool WHERE pool2tournament = ?", tournamentId);
+            // ON DELETE CASCADE pour Match
+            await _database.ExecuteAsync("DELETE FROM Match WHERE match2tournament = ?", tournamentId);
+        }
+
+        private async Task HandleDeletePoolAsync(int poolId)
+        {
+            // ON DELETE SET NULL pour Match.match2pool
+            await _database.ExecuteAsync("UPDATE Match SET match2pool = NULL WHERE match2pool = ?", poolId);
+        }
+
+        private async Task HandleDeleteTeamAsync(int teamId)
+        {
+            // ON DELETE CASCADE pour Match
+            await _database.ExecuteAsync("DELETE FROM Match WHERE match2team1 = ? OR match2team2 = ?", teamId, teamId);
+        }
+
+        // Méthodes CRUD
+        public async Task<int> SaveTournamentAsync(Tournament tournament)
+        {
+            ValidateTournament(tournament);
+            if (tournament.Id != 0)
+                return await _database.UpdateAsync(tournament);
+            return await _database.InsertAsync(tournament);
+        }
+
+        public async Task<int> SavePoolAsync(Pool pool)
+        {
+            await ValidatePoolAsync(pool);
+            if (pool.Id != 0)
+                return await _database.UpdateAsync(pool);
+            return await _database.InsertAsync(pool);
+        }
+
+        public async Task<int> SaveMatchAsync(Match match)
+        {
+            await ValidateMatchAsync(match);
+            if (match.Id != 0)
+                return await _database.UpdateAsync(match);
+            return await _database.InsertAsync(match);
+        }
+
+        public async Task<int> SaveTeamAsync(Team team)
+        {
+            if (string.IsNullOrEmpty(team.Name))
+                throw new ArgumentException("Team name must be non-empty.");
+            if (team.Id != 0)
+                return await _database.UpdateAsync(team);
+            return await _database.InsertAsync(team);
+        }
+
+        public async Task DeleteTournamentAsync(int tournamentId)
+        {
+            await HandleDeleteTournamentAsync(tournamentId);
+            await _database.DeleteAsync<Tournament>(tournamentId);
+        }
+
+        public async Task DeletePoolAsync(int poolId)
+        {
+            await HandleDeletePoolAsync(poolId);
+            await _database.DeleteAsync<Pool>(poolId);
+        }
+
+        public async Task DeleteTeamAsync(int teamId)
+        {
+            await HandleDeleteTeamAsync(teamId);
+            await _database.DeleteAsync<Team>(teamId);
+        }
+
+        public Task<List<Tournament>> GetTournamentsAsync()
+        {
+            return _database.Table<Tournament>().ToListAsync();
+        }
+
+        public Task<List<Team>> GetTeamsByTournamentAsync(int tournamentId)
+        {
+            return _database.QueryAsync<Team>(
+                @"SELECT DISTINCT t.* 
+                  FROM Team t 
+                  JOIN ""match"" m ON t.id IN (m.match2team1, m.match2team2) 
+                  WHERE m.match2tournament = ?", tournamentId);
+        }
+
+        public Task<List<Pool>> GetPoolsByTournamentAsync(int tournamentId)
+        {
+            return _database.Table<Pool>().Where(p => p.Pool2Tournament == tournamentId).ToListAsync();
+        }
+
+        public Task<List<Match>> GetMatchesByPoolAsync(int poolId)
+        {
+            return _database.Table<Match>().Where(m => m.Match2Pool == poolId).ToListAsync();
+        }
+    }
+}
+
+
+
+
+public async Task CreateChampionshipAsync(DatabaseService db, string tournamentName, List<string> teamNames)
+{
+    // Créer le tournoi
+    var tournament = new Tournament
+    {
+        Name = tournamentName,
+        SportType = "Petanque",
+        StartDate = DateTime.Today.ToString("yyyy-MM-dd"),
+        Format = "Championship"
+    };
+    await db.SaveTournamentAsync(tournament);
+
+    // Créer la poule
+    var pool = new Pool { Name = "Championship", Pool2Tournament = tournament.Id };
+    await db.SavePoolAsync(pool);
+
+    // Créer les équipes
+    var teams = new List<Team>();
+    foreach (var name in teamNames)
+    {
+        var team = new Team { Name = name };
+        await db.SaveTeamAsync(team);
+        teams.Add(team);
+    }
+
+    // Générer les matches (toutes contre toutes)
+    for (int i = 0; i < teams.Count; i++)
+    {
+        for (int j = i + 1; j < teams.Count; j++)
+        {
+            var match = new Match
+            {
+                Match2Tournament = tournament.Id,
+                Match2Pool = pool.Id,
+                Match2Team1 = teams[i].Id,
+                Match2Team2 = teams[j].Id,
+                MatchDate = DateTime.Today.ToString("yyyy-MM-dd")
+            };
+            await db.SaveMatchAsync(match);
+        }
+    }
+}
+
+public Task<List<Pool>> GetPoolsByTournamentAsync(int tournamentId)
+        {
+            return _database.Table<Pool>().Where(p => p.Pool2Tournament == tournamentId).ToListAsync();
+        }
+
+        public Task<List<Match>> GetMatchesByPoolAsync(int poolId)
+        {
+            return _database.Table<Match>().Where(m => m.Match2Pool == poolId).ToListAsync();
+        }
+
+
+        public async Task CreateChampionshipAsync(DatabaseService db, string tournamentName, List<string> teamNames)
+{
+    var tournament = new Tournament
+    {
+        Name = tournamentName,
+        SportType = "Petanque",
+        StartDate = DateTime.Today.ToString("yyyy-MM-dd"),
+        Format = "Championship"
+    };
+    await db.SaveTournamentAsync(tournament);
+
+    var pool = new Pool { Name = "Championship", Pool2Tournament = tournament.Id };
+    await db.SavePoolAsync(pool);
+
+    var teams = new List<Team>();
+    foreach (var name in teamNames)
+    {
+        var team = new Team { Name = name };
+        await db.SaveTeamAsync(team);
+        teams.Add(team);
+    }
+
+    for (int i = 0; i < teams.Count; i++)
+    {
+        for (int j = i + 1; j < teams.Count; j++)
+        {
+            var match = new Match
+            {
+                Match2Tournament = tournament.Id,
+                Match2Pool = pool.Id,
+                Match2Team1 = teams[i].Id,
+                Match2Team2 = teams[j].Id,
+                MatchDate = DateTime.Today.ToString("yyyy-MM-dd")
+            };
+            await db.SaveMatchAsync(match);
+        }
+    }
+}

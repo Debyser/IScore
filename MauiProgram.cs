@@ -1,5 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
-
+﻿using IScore.ViewModels;
+using IScore.Views;
+using Microsoft.Extensions.Logging;
 namespace IScore
 {
     public static class MauiProgram
@@ -15,8 +16,12 @@ namespace IScore
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
+
+            builder.Services.AddSingleton<TournamentPage>();
+            builder.Services.AddSingleton<TournamentViewModel>();
+
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();

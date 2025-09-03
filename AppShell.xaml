@@ -4,7 +4,18 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:IScore"
+    xmlns:views="clr-namespace:IScore.Views"
+    FlyoutHeaderBehavior="CollapseOnScroll"
     Title="IScore">
+
+
+    <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
+     
+        <ShellContent Title="Tournoi"
+                      Icon="monkey.png"
+                      ContentTemplate="{DataTemplate views:TournamentPage}" />
+        
+    </FlyoutItem>
 
     <ShellContent
         Title="Home"

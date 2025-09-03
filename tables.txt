@@ -1,45 +1,54 @@
-﻿CREATE TABLE Tournament (
-    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-    Name TEXT NOT NULL,
-    SportType TEXT NOT NULL CHECK(SportType IN ('Pétanque', 'Mini-foot')),
-    StartDate TEXT NOT NULL,
-    Format TEXT NOT NULL CHECK(Format IN ('Poule', 'Elimination', 'Championnat'))
+﻿-- Team definition
+
+CREATE TABLE team (
+	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+	name TEXT NOT NULL
 );
 
-CREATE TABLE Team (
-    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-    Name TEXT NOT NULL,
-    PoolId INTEGER,
-    FOREIGN KEY (PoolId) REFERENCES Pool(Id) ON DELETE SET NULL
+
+-- Tournament definition
+
+CREATE TABLE tournament (
+	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+	name TEXT(50) NOT NULL,
+	sport_type TEXT(20) NOT NULL,
+	start_date TEXT NOT NULL,
+	format TEXT(20) NOT NULL
 );
 
-CREATE TABLE Pool (
-    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-    Name TEXT NOT NULL,
-    TournamentId INTEGER,
-    FOREIGN KEY (TournamentId) REFERENCES Tournament(Id) ON DELETE CASCADE
+
+
+-- Pool definition
+
+CREATE TABLE pool (
+	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+	name TEXT NOT NULL,
+	pool2tournament INTEGER,
+	CONSTRAINT pool_pool2tournament_fkey FOREIGN KEY (pool2tournament) REFERENCES tournament(id) ON DELETE CASCADE
 );
 
-CREATE TABLE Match (
-    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-    TournamentId INTEGER,
-    PoolId INTEGER,
-    TeamId1 INTEGER,
-    TeamId2 INTEGER,
-    TeamScore1 INTEGER,
-    TeamScore2 INTEGER,
-    MatchDate TEXT NOT NULL,
-    Phase TEXT,
-    FOREIGN KEY (TournamentId) REFERENCES Tournament(Id) ON DELETE CASCADE,
-    FOREIGN KEY (PoolId) REFERENCES Pool(Id) ON DELETE SET NULL,
-    FOREIGN KEY (TeamId1) REFERENCES Team(Id) ON DELETE CASCADE,
-    FOREIGN KEY (TeamId2) REFERENCES Team(Id) ON DELETE CASCADE
+
+-- "match" definition
+
+CREATE TABLE "match" (
+	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+	match2tournament INTEGER NOT NULL,
+	match2pool INTEGER,
+	match2team1 INTEGER NOT NULL,
+	match2team2 INTEGER NOT NULL,
+	team1_score INTEGER,
+	team2_score INTEGER,
+	match_date TEXT NOT NULL,
+	CONSTRAINT match_match2pool_fkey FOREIGN KEY (match2pool) REFERENCES pool(id) ON DELETE SET NULL,
+	CONSTRAINT match_match2team1_fkey FOREIGN KEY (match2team1) REFERENCES team(id) ON DELETE CASCADE,
+	CONSTRAINT match_match2tournament_fkey FOREIGN KEY (match2tournament) REFERENCES tournament(id) ON DELETE CASCADE,
+	CONSTRAINT match_match2team2_fkey FOREIGN KEY (match2team2) REFERENCES team(id) ON DELETE CASCADE
 );
 
-CREATE TABLE TournamentTeam (
-    TournamentId INTEGER,
-    TeamId INTEGER,
-    PRIMARY KEY (TournamentId, TeamId),
-    FOREIGN KEY (TournamentId) REFERENCES Tournament(Id) ON DELETE CASCADE,
-    FOREIGN KEY (TeamId) REFERENCES Team(Id) ON DELETE CASCADE
-);
+-- indexes
+
+CREATE UNIQUE INDEX Tournament_name_IDX ON tournament (name);
+CREATE INDEX match_match2tournament_IDX ON "match" (match2tournament);
+CREATE INDEX match_match2pool_IDX ON "match" (match2pool);
+CREATE INDEX match_match2team1_IDX ON "match" (match2team1);
+CREATE INDEX match_match2team2_IDX ON "match" (match2team2);

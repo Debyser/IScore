@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="IScore.Views.TournamentPage"
+             xmlns:viewmodels="clr-namespace:IScore.ViewModels"
+             x:DataType="viewmodels:TournamentViewModel"
+             Title="TournamentPage">
+    <VerticalStackLayout>
+        <Label 
+            Text="Welcome to tournament page"
+            VerticalOptions="Center" 
+            HorizontalOptions="Center" />
+
+        <Entry 
+            Placeholder="Enter tournament name"
+            Text="{Binding Name}"
+           
+            />
+    </VerticalStackLayout>
+</ContentPage>
