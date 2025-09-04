@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="IScore.Views.TournamentPage"
              xmlns:vm="clr-namespace:IScore.ViewModels"
+             xmlns:models="clr-namespace:IScore.Models"
              x:DataType="vm:TournamentViewModel"
              Title="TournamentPage">
     <Grid Padding="20">
@@ -13,9 +14,9 @@
         <StackLayout Orientation="Horizontal" Spacing="10">
             <Button Text="Ajouter un tournoi" Command="{Binding AddCommand}" />
         </StackLayout>
-        <!--<CollectionView Grid.Row="1" ItemsSource="{Binding Tournaments}">
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Tournaments}">
             <CollectionView.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate x:DataType="models:Tournament">
                     <Grid Padding="10" ColumnSpacing="10">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="2*" />
@@ -34,6 +35,6 @@
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
-        </CollectionView>-->
+        </CollectionView>
     </Grid>
 </ContentPage>

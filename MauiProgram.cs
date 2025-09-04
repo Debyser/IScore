@@ -20,7 +20,7 @@ namespace IScore
             builder.Services.AddSingleton<DatabaseContext>();
             builder.Services.AddSingleton<TournamentPage>();
             builder.Services.AddSingleton<TournamentViewModel>();
-
+            //builder.Services.AddSingleton<DatabaseService>();
 
 #if DEBUG
             builder.Logging.AddDebug();

@@ -52,3 +52,19 @@ CREATE INDEX match_match2tournament_IDX ON "match" (match2tournament);
 CREATE INDEX match_match2pool_IDX ON "match" (match2pool);
 CREATE INDEX match_match2team1_IDX ON "match" (match2team1);
 CREATE INDEX match_match2team2_IDX ON "match" (match2team2);
+
+
+insert into tournament (name, sport_type, start_date, format) values ('Italian Sausage Links', 'Football', '2025-09-04', 'Tournament');
+insert into tournament (name, sport_type, start_date, format) values ('Black Bean Soup', 'Basketball', '2025-09-04', 'Tournament');
+insert into tournament (name, sport_type, start_date, format) values ('Vegetable Spring Rolls', 'Mini-foot', '2025-09-04', 'League');
+insert into tournament (name, sport_type, start_date, format) values ('Yoga Blocks', 'Basketball', '2025-09-04', 'Cup');
+insert into tournament (name, sport_type, start_date, format) values ('Comfort Flats', 'Mini-foot', '2025-09-04', 'Tournament');
+insert into tournament (name, sport_type, start_date, format) values ('Crispy Potato Tots', 'Volleyball', '2025-09-04', 'Tournament');
+insert into tournament (name, sport_type, start_date, format) values ('Pet First Aid Kit', 'Volleyball', '2025-09-04', 'Championnat');
+insert into tournament (name, sport_type, start_date, format) values ('Pet Safety Belt for Car', 'Football', '2025-09-04', 'Championnat');
+insert into tournament (name, sport_type, start_date, format) values ('Cheddar Cheese Crackers', 'Football', '2025-09-04', 'League');
+insert into tournament (name, sport_type, start_date, format) values ('Almond Joy Protein Bars', 'Volleyball', '2025-09-04', 'League');
+insert into tournament (name, sport_type, start_date, format) values ('Fashionable Belt Bag', 'Basketball', '2025-09-04', 'Cup');
+insert into tournament (name, sport_type, start_date, format) values ('Coconut Chips', 'Basketball', '2025-09-04', 'Cup');
+insert into tournament (name, sport_type, start_date, format) values ('Ceramic Non-Stick Frying Pan', 'Basketball', '2025-09-04', 'Championnat');
+insert into tournament (name, sport_type, start_date, format) values ('Coconut Curry Lentil Soup', 'Mini-foot', '2025-09-04', 'League');
