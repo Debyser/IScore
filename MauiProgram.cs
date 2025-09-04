@@ -1,4 +1,6 @@
-﻿using IScore.ViewModels;
+﻿using IScore.Data;
+using IScore.Services;
+using IScore.ViewModels;
 using IScore.Views;
 using Microsoft.Extensions.Logging;
 namespace IScore
@@ -16,9 +18,14 @@ namespace IScore
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
+            builder.Services.AddTransient<DatabaseContext>();
 
-            builder.Services.AddSingleton<TournamentPage>();
-            builder.Services.AddSingleton<TournamentViewModel>();
+
+            builder.Services.AddTransient<TournamentPage>();
+            builder.Services.AddTransient<TournamentViewModel>();
+            builder.Services.AddSingleton<TournamentService>();
+
+
 
 #if DEBUG
             builder.Logging.AddDebug();

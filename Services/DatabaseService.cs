@@ -5,14 +5,14 @@ namespace IScore.Services;
 public class DatabaseService
 {
     private static SQLiteAsyncConnection _database;
-    private const string DbFileName = "tournaments.db3";
+    private const string DbName = "iscore.db3";
 
 
     public static async Task<SQLiteAsyncConnection> GetDatabaseAsync()
     {
         if (_database == null)
         {
-            var dbPath = Path.Combine(FileSystem.AppDataDirectory, "iscore.db3");
+            var dbPath = Path.Combine(FileSystem.AppDataDirectory, DbName);
             _database = new SQLiteAsyncConnection(dbPath);
             // Créez les tables si nécessaire
             await _database.CreateTableAsync<Team>();

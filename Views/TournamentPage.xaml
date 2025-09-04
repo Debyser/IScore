@@ -5,16 +5,35 @@
              xmlns:viewmodels="clr-namespace:IScore.ViewModels"
              x:DataType="viewmodels:TournamentViewModel"
              Title="TournamentPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to tournament page"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-
-        <Entry 
-            Placeholder="Enter tournament name"
-            Text="{Binding Name}"
-           
-            />
-    </VerticalStackLayout>
+    <Grid Padding="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackLayout Orientation="Horizontal" Spacing="10">
+            <Button Text="Ajouter un tournoi" Command="{Binding AddTournamentCommand}" />
+        </StackLayout>
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Tournaments}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="10" ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Label Text="{Binding Name}" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="{Binding SportType}" VerticalOptions="Center" />
+                        <Label Grid.Column="2" Text="{Binding StartDate}" VerticalOptions="Center" />
+                        <Label Grid.Column="3" Text="{Binding Format}" VerticalOptions="Center" />
+                        <Button Grid.Column="4" Text="Détails" Command="{Binding BindingContext.ViewTournamentCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}" CommandParameter="{Binding .}" />
+                        <Button Grid.Column="5" Text="Supprimer" Command="{Binding BindingContext.DeleteTournamentCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}" CommandParameter="{Binding .}" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
 </ContentPage>

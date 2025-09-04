@@ -1,4 +1,4 @@
-﻿namespace TodoSQLite;
+﻿namespace IScore;
 
 public static class Constants
 {
