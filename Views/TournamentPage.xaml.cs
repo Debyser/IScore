@@ -16,7 +16,6 @@ public partial class TournamentPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        // Optionally, you can refresh data here if needed
         await _viewModel.LoadAsync();
     }
 }

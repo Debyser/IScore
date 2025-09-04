@@ -2,8 +2,8 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="IScore.Views.TournamentPage"
-             xmlns:viewmodels="clr-namespace:IScore.ViewModels"
-             x:DataType="viewmodels:TournamentViewModel"
+             xmlns:vm="clr-namespace:IScore.ViewModels"
+             x:DataType="vm:TournamentViewModel"
              Title="TournamentPage">
     <Grid Padding="20">
         <Grid.RowDefinitions>
@@ -11,9 +11,9 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackLayout Orientation="Horizontal" Spacing="10">
-            <Button Text="Ajouter un tournoi" Command="{Binding AddTournamentCommand}" />
+            <Button Text="Ajouter un tournoi" Command="{Binding AddCommand}" />
         </StackLayout>
-        <CollectionView Grid.Row="1" ItemsSource="{Binding Tournaments}">
+        <!--<CollectionView Grid.Row="1" ItemsSource="{Binding Tournaments}">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Grid Padding="10" ColumnSpacing="10">
@@ -34,6 +34,6 @@
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
-        </CollectionView>
+        </CollectionView>-->
     </Grid>
 </ContentPage>
