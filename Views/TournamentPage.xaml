@@ -12,7 +12,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackLayout Orientation="Horizontal" Spacing="10">
-            <Button Text="Ajouter un tournoi" Command="{Binding AddCommand}" />
+            <Button Text="Ajouter un tournoi" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:TournamentViewModel}},Path=AddCommand}" />
         </StackLayout>
         <CollectionView Grid.Row="1" ItemsSource="{Binding Tournaments}">
             <CollectionView.ItemTemplate>
@@ -22,19 +22,30 @@
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Label Text="{Binding Name}" VerticalOptions="Center" />
                         <Label Grid.Column="1" Text="{Binding SportType}" VerticalOptions="Center" />
-                        <Label Grid.Column="2" Text="{Binding StartDate}" VerticalOptions="Center" />
-                        <Label Grid.Column="3" Text="{Binding Format}" VerticalOptions="Center" />
-                        <Button Grid.Column="4" Text="Détails" Command="{Binding BindingContext.ViewTournamentCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}" CommandParameter="{Binding .}" />
-                        <Button Grid.Column="5" Text="Supprimer" Command="{Binding BindingContext.DeleteTournamentCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}" CommandParameter="{Binding .}" />
+                        <Label Grid.Column="2" Text="{Binding Format}" VerticalOptions="Center" />
+                        <Button Grid.Column="3" Text="Détails" Command="{Binding BindingContext.ViewTournamentCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}" CommandParameter="{Binding .}" />
+                        <Button Grid.Column="4" Text="Supprimer" Command="{Binding BindingContext.DeleteTournamentCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}" CommandParameter="{Binding .}" />
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <ContentView>
+                    <VerticalStackLayout HorizontalOptions="Center"
+                                         VerticalOptions="Center">
+                        <Label Text="Aucun tournoi enregistré"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center" />
+                        
+
+                    </VerticalStackLayout>
+                </ContentView>
+            </CollectionView.EmptyView>
         </CollectionView>
     </Grid>
 </ContentPage>

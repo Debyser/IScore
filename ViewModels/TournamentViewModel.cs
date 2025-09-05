@@ -44,9 +44,11 @@ namespace IScore.ViewModels
         [RelayCommand]
         public async Task AddAsync()
         {
-            if (Tournament is null) return;
 
-            var busyText = Tournament.Id == 0 ? "Adding tournament..." : "Updating tournament...";
+            await Shell.Current.GoToAsync(nameof(Views.AddTournamentPage));
+            // if (Tournament is null) return;
+
+            /*var busyText = Tournament.Id == 0 ? "Adding tournament..." : "Updating tournament...";
             await ExecuteAsync(async () =>
             {
                 if (Tournament.Id == 0)
@@ -66,7 +68,7 @@ namespace IScore.ViewModels
                 Tournament = new();
                 setOperatingTournamentCommand?.Execute(new());
             }, busyText);
-
+            */
 
 
         }

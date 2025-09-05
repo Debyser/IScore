@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="IScore.Views.AddTournamentPage"
+             Title="AddTournamentPage">
+    <VerticalStackLayout Padding="20" Spacing="15">
+        <Entry Placeholder="Nom du tournoi" x:Name="NameEntry" />
+        <Entry Placeholder="Type de sport" x:Name="SportTypeEntry" />
+        <Entry Placeholder="Date de début (YYYY-MM-DD)" x:Name="StartDateEntry" />
+        <Entry Placeholder="Format" x:Name="FormatEntry" />
+    </VerticalStackLayout>
+</ContentPage>
