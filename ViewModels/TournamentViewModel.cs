@@ -81,11 +81,9 @@ namespace IScore.ViewModels
             {
                 if (await _context.DeleteItemByKeyAsync<Tournament>(id))
                 {
-                    var tournament = Tournaments.FirstOrDefault(t => t.Id == id);
-                    if (tournament != null)
-                    {
-                        Tournaments.Remove(tournament);
-                    }
+                    var tournaments = await _context.GetAllAsync<Tournament>();
+                    Tournaments.Clear();
+                    foreach (var tournament in tournaments) Tournaments.Add(tournament);
                 }
                 else
                 {

@@ -2,11 +2,30 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="IScore.Views.AddTournamentPage"
+             xmlns:vm="clr-namespace:IScore.ViewModels"
+             xmlns:models="clr-namespace:IScore.Models"
+             x:DataType="vm:AddTournamentViewModel"
              Title="AddTournamentPage">
     <VerticalStackLayout Padding="20" Spacing="15">
-        <Entry Placeholder="Nom du tournoi" x:Name="NameEntry" />
-        <Entry Placeholder="Type de sport" x:Name="SportTypeEntry" />
-        <Entry Placeholder="Date de début (YYYY-MM-DD)" x:Name="StartDateEntry" />
-        <Entry Placeholder="Format" x:Name="FormatEntry" />
+        <Entry Placeholder="Nom du tournoi"  Text="{Binding Name}" />
+        <Picker x:Name="format"
+             Title="Format">
+            <Picker.ItemsSource>
+                <x:Array Type="{x:Type x:String}">
+                    <x:String>Poule</x:String>
+                    <x:String>Championnat</x:String>
+                    <x:String>Élimination direct</x:String>
+                </x:Array>
+            </Picker.ItemsSource>
+        </Picker>
+        <Picker x:Name="sportStype"
+                Title="Type de sport">
+            <Picker.ItemsSource>
+                <x:Array Type="{x:Type x:String}">
+                    <x:String>Pétanque</x:String>
+                    <x:String>Mini-foot</x:String>
+                </x:Array>
+            </Picker.ItemsSource>
+        </Picker>
     </VerticalStackLayout>
 </ContentPage>
