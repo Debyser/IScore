@@ -28,7 +28,9 @@
                         <Label Text="{Binding Name}" VerticalOptions="Center" />
                         <Label Grid.Column="1" Text="{Binding SportType}" VerticalOptions="Center" />
                         <Label Grid.Column="2" Text="{Binding Format}" VerticalOptions="Center" />
-                        <Button Grid.Column="3" Text="Détails" Command="{Binding BindingContext.ViewTournamentCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}" CommandParameter="{Binding .}" />
+                        <Button Grid.Column="3" Text="Détails" 
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:TournamentViewModel}},Path=DetailCommand}" 
+                                 CommandParameter="{Binding .}"/>
                         <Button 
                             Grid.Column="4" 
                             Text="Supprimer" 

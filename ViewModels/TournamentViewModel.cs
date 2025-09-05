@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using IScore.Data;
 using IScore.Models;
+using IScore.Views;
 using System.Collections.ObjectModel;
 
 namespace IScore.ViewModels
@@ -42,10 +43,22 @@ namespace IScore.ViewModels
         }
 
         [RelayCommand]
+        public async Task DetailAsync
+            (Tournament tournament)
+        {
+            if (tournament is null) return;
+            var navParam = new Dictionary<string, object>
+            {
+                { "tournament", tournament }
+            };
+            await Shell.Current.GoToAsync(nameof(TournamentDetailPage), navParam);
+        }
+
+        [RelayCommand]
         public async Task AddAsync()
         {
 
-            await Shell.Current.GoToAsync(nameof(Views.AddTournamentPage));
+            await Shell.Current.GoToAsync(nameof(AddTournamentPage));
             // if (Tournament is null) return;
 
             /*var busyText = Tournament.Id == 0 ? "Adding tournament..." : "Updating tournament...";
