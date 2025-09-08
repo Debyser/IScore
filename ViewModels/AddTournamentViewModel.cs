@@ -33,7 +33,7 @@ namespace IScore.ViewModels
             await _service.CreateAsync(tournament);
             // add a alert
             await Shell.Current.DisplayAlert("Success", "Tournament added successfully", "OK");
-
+            //test navigation
             //await Shell.Current.GoToAsync("..");
             Clear();
         }

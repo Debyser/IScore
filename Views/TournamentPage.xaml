@@ -20,9 +20,14 @@
         <StackLayout Orientation="Horizontal" Spacing="10">
             <Button Text="Ajouter un tournoi" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:TournamentViewModel}},Path=AddCommand}" />
         </StackLayout>
-        <CollectionView Grid.Row="1" ItemsSource="{Binding Tournaments}">
+        <CollectionView 
+            Grid.Row="1" 
+            ItemsSource="{Binding Tournaments}" 
+            SelectionChangedCommand="{Binding DetailCommand}" 
+                SelectionMode="Single"
+             SelectionChangedCommandParameter="{Binding Path=SelectedItem, Source={RelativeSource Self}}">
             <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:Tournament">
+                <DataTemplate x:DataType="models:Tournament" >
                     <Grid Padding="10" ColumnSpacing="10">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="2*" />
