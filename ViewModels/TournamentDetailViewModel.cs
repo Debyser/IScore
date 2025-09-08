@@ -1,13 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using IScore.Data;
 using IScore.Models;
+using IScore.Services;
 
 namespace IScore.ViewModels
 {
-    public partial class TournamentDetailViewModel(DatabaseContext context) : ObservableObject, IQueryAttributable
+    public partial class TournamentDetailViewModel(TournamentService service) : ObservableObject, IQueryAttributable
     {
-        private readonly DatabaseContext _context = context;
+        private readonly TournamentService _service = service;
         private Tournament _tournament;
         [ObservableProperty]
         public partial string Name { get; set; }
@@ -26,7 +26,7 @@ namespace IScore.ViewModels
             _tournament.Format = Format;
             _tournament.SportType = SportType;
             _tournament.StartDate = DateTime.Now.ToString("yyyy-MM-dd");
-            await _context.UpdateItemAsync<Tournament>(_tournament);
+            await _service.ModifyAsync(_tournament.Id, _tournament);
             await Shell.Current.DisplayAlert("Success", "Tournament updated successfully", "OK");
             Clear();
             await Shell.Current.GoToAsync("..");

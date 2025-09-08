@@ -1,15 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using IScore.Data;
 using IScore.Models;
+using IScore.Services;
 using IScore.Views;
 using System.Collections.ObjectModel;
 
 namespace IScore.ViewModels
 {
-    public partial class TournamentViewModel(DatabaseContext context) : ObservableObject
+    public partial class TournamentViewModel(TournamentService service) : ObservableObject
     {
-        private readonly DatabaseContext _context = context;
+        private readonly TournamentService _service = service;
 
         [ObservableProperty]
         public partial ObservableCollection<Tournament> Tournaments { get; set; } = new();
@@ -32,7 +32,7 @@ namespace IScore.ViewModels
             var busyText = "Loading tournaments...";
             await ExecuteAsync(async () =>
             {
-                var tournaments = await _context.GetAllAsync<Tournament>();
+                var tournaments = await _service.GetListAsync();
                 if (tournaments is null) return;
                 if (!tournaments.Any()) return;
 
@@ -92,9 +92,9 @@ namespace IScore.ViewModels
             if (id == 0) return;
             await ExecuteAsync(async () =>
             {
-                if (await _context.DeleteItemByKeyAsync<Tournament>(id))
+                if (await _service.DeleteItemByKeyAsync(id))
                 {
-                    var tournaments = await _context.GetAllAsync<Tournament>();
+                    var tournaments = await _service.GetListAsync();
                     Tournaments.Clear();
                     foreach (var tournament in tournaments) Tournaments.Add(tournament);
                 }

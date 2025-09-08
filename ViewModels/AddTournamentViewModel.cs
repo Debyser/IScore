@@ -1,14 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using IScore.Data;
 using IScore.Models;
+using IScore.Services;
 
 namespace IScore.ViewModels
 {
     //[QueryProperty("Text","Text")]
-    public partial class AddTournamentViewModel(DatabaseContext context) : ObservableObject
+    public partial class AddTournamentViewModel(TournamentService service) : ObservableObject
     {
-        private readonly DatabaseContext _context = context;
+        private readonly TournamentService _service = service;
         [ObservableProperty]
         public partial string Name { get; set; }
 
@@ -30,7 +30,7 @@ namespace IScore.ViewModels
                 SportType = SportType,
                 StartDate = DateTime.Now.ToString("yyyy-MM-dd")
             };
-            await _context.AddItemAsync<Tournament>(tournament);
+            await _service.CreateAsync(tournament);
             // add a alert
             await Shell.Current.DisplayAlert("Success", "Tournament added successfully", "OK");
 

@@ -6,11 +6,17 @@
              xmlns:models="clr-namespace:IScore.Models"
              x:DataType="vm:TournamentViewModel"
              Title="TournamentPage">
-    <Grid Padding="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+    <Grid Padding="20" RowDefinitions="Auto,*">
+        <VerticalStackLayout Grid.RowSpan="2"
+                             VerticalOptions="Center"
+                             HorizontalOptions="Center"
+                             IsVisible="{Binding IsBusy}">
+            <ActivityIndicator IsRunning="True"
+                               VerticalOptions="Center"
+                               HorizontalOptions="Center" />
+            <Label Text="{Binding BusyText}" />
+
+        </VerticalStackLayout>
         <StackLayout Orientation="Horizontal" Spacing="10">
             <Button Text="Ajouter un tournoi" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:TournamentViewModel}},Path=AddCommand}" />
         </StackLayout>
@@ -47,8 +53,6 @@
                                FontSize="18"
                                FontAttributes="Bold"
                                HorizontalTextAlignment="Center" />
-                        
-
                     </VerticalStackLayout>
                 </ContentView>
             </CollectionView.EmptyView>
